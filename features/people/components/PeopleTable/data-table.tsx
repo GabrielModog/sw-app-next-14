@@ -7,6 +7,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
 
 import {
   Table,

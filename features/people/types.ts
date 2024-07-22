@@ -7,6 +7,7 @@ export interface IPeople {
   mass: string
   skin_color: string
   name: string
+  url: string
 }
 
 export type PeopleListType = IPeople[]
