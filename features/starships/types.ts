@@ -9,6 +9,7 @@ export interface IStarship {
   model: string
   passengers: string
   name: string
+  url: string
   pilots?: PeopleListType
 }
 

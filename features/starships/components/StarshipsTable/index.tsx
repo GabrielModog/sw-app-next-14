@@ -1,14 +1,41 @@
-"use client"
+"use client";
 
-import { StarshipsListType } from "@/features/starships/types"
-import { columns } from "./columns"
-import { StarshipsDataTable } from "./data-table"
+import { useEffect } from "react";
 
-interface StarshipsTableProps {
-  data: StarshipsListType
-}
+import { useStarshipsStore } from "@/features/starships/store/starships";
+import { getStarshipsRequest } from "@/features/starships/api/get-starships";
+import { useToast } from "@/components/ui/use-toast";
 
-export default function StarshipsTable(props: StarshipsTableProps) {
-  const { data } = props
-  return <StarshipsDataTable columns={columns} data={data} />
+import { columns } from "./columns";
+import { StarshipsDataTable } from "./data-table";
+
+export default function StarshipsTable() {
+  const { starships, setStarships, page, setPage } = useStarshipsStore();
+
+  const { toast } = useToast();
+
+  async function load() {
+    const [error, data] = await getStarshipsRequest({ page });
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        description: "Wans't possible to load list. Try refresh the page.",
+      });
+    }
+    setStarships(data?.results!);
+  }
+
+  useEffect(() => {
+    load();
+  }, [page]);
+
+  return (
+    <StarshipsDataTable
+      columns={columns}
+      data={starships}
+      page={page}
+      setPage={setPage}
+    />
+  );
 }
