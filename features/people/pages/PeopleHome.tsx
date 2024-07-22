@@ -4,20 +4,26 @@ import { useEffect, useState } from "react";
 
 import PeopleTable from "../components/PeopleTable";
 
-import { api } from "@/lib/api";
+import { getPeopleRequest } from "../api/get-people";
+import { useToast } from "@/components/ui/use-toast";
 
-export default function PeopleHomepage(){
-  const [state, setState] = useState([])
+export default function PeopleHomepage() {
+  const [state, setState] = useState<any>([])
 
-  async function load(){
-    try {
-      const response = await api.get("/people/")
-      console.log(response.data)
-      return  setState(response.data.results)
-    } catch (error) {
-      console.error(error)
-      return error
+  const { toast } = useToast()
+
+  async function load() {
+    const [error, data] = await getPeopleRequest({ page: 1 })
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        description: "Wans't possible to load list. Try refresh the page.",
+      })
     }
+
+    console.log(data)
+    setState(data?.results)
   }
 
   useEffect(() => {

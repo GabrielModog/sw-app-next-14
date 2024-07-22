@@ -11,8 +11,7 @@ export default function StarshipsHomepage(){
 
   async function load(){
     try {
-      const response = await api.get("/people/")
-      console.log(response.data)
+      const response = await api.get("/starships/")
       return  setState(response.data.results)
     } catch (error) {
       console.error(error)
