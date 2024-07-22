@@ -7,7 +7,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
 
 import {
   Table,
@@ -22,17 +21,21 @@ import { Button } from "@/components/ui/button"
 interface PeopleDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  page: number
+  setPage: (page: number) => void
 }
 
 export function PeopleDataTable<TData, TValue>({
   columns,
   data,
+  page,
+  setPage
 }: PeopleDataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel()
+    getPaginationRowModel: getPaginationRowModel(),
   })
 
   return (
@@ -85,16 +88,15 @@ export function PeopleDataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={() => setPage(page - 1)}
+          disabled={page <= 1}
         >
           Previous
         </Button>
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={() => setPage(page + 1)}
         >
           Next
         </Button>

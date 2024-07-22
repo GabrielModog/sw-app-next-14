@@ -1,9 +1,10 @@
-import PeopleHomepage from "@/features/people/pages/PeopleHome";
-
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between pt-4 px-24">
-     <PeopleHomepage />
+      <div className="flex flex-col">
+        <h3 className="text-2xl text-center">Welcome</h3>
+        <p className="text-center">Feel free to navigate</p>
+      </div>
     </main>
   );
 }

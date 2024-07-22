@@ -4,9 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { useRouter } from "next/navigation";
 
 import { IPeople } from "@/features/people/types"
-
 import { Button } from "@/components/ui/button"
-import { usePersonStore } from "../../store/person"
 
 export const columns: ColumnDef<IPeople>[] = [
   {
@@ -18,16 +16,8 @@ export const columns: ColumnDef<IPeople>[] = [
     header: "Birth Year",
   },
   {
-    accessorKey: "skin_color",
-    header: "Skin Color",
-  },
-  {
-    accessorKey: "hair_color",
-    header: "Hair Color",
-  },
-  {
-    accessorKey: "eye_color",
-    header: "Eye Color",
+    accessorKey: "gender",
+    header: "Gender",
   },
   {
     id: "actions",
@@ -43,7 +33,7 @@ export const columns: ColumnDef<IPeople>[] = [
       }
       return (
         <Button variant="outline" onClick={handleAction}>
-          <span className="sr-only">Go to Details</span>
+          <span className="sr-only">More Details</span>
         </Button>
       )
     },

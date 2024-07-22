@@ -1,3 +1,5 @@
+import { StarshipsListType } from "../starships/types"
+
 export interface IPeople {
   birth_year: string
   eye_color: string
@@ -8,6 +10,7 @@ export interface IPeople {
   skin_color: string
   name: string
   url: string
+  starships?: string[] | StarshipsListType
 }
 
 export type PeopleListType = IPeople[]
