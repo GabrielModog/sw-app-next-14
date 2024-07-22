@@ -18,19 +18,23 @@ import { Input } from "@/components/ui/input";
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6, "Your password most be at least 6 characters."),
+  confirmPassword: z
+    .string()
+    .min(6, "Your password most be at least 6 characters."),
 });
 
 const defaultValues = {
   email: "",
   password: "",
+  confirmPassword: "",
 };
 
-interface LoginFormProps {
-  onSubmit: (values: z.infer<typeof formSchema>) => void
+interface SignUpFormProps {
+  onSubmit: (values: z.infer<typeof formSchema>) => void;
 }
 
-export default function LoginForm(props: LoginFormProps) {
-  const {onSubmit} = props
+export default function SignUpForm(props: SignUpFormProps) {
+  const { onSubmit } = props;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,7 +43,7 @@ export default function LoginForm(props: LoginFormProps) {
 
   async function onSubmitHandler(values: z.infer<typeof formSchema>) {
     console.log(values);
-    await onSubmit(values)
+    await onSubmit(values);
   }
 
   return (
@@ -72,6 +76,21 @@ export default function LoginForm(props: LoginFormProps) {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input placeholder="Confirm Password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type="submit">Login</Button>
       </form>
     </Form>
