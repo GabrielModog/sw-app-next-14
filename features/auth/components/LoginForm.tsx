@@ -27,10 +27,11 @@ const defaultValues = {
 
 interface LoginFormProps {
   onSubmit: (values: z.infer<typeof formSchema>) => void
+  loading?: boolean
 }
 
 export default function LoginForm(props: LoginFormProps) {
-  const {onSubmit} = props
+  const {onSubmit, loading = false} = props
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,6 +40,7 @@ export default function LoginForm(props: LoginFormProps) {
 
   async function onSubmitHandler(values: z.infer<typeof formSchema>) {
     console.log(values);
+    form.reset()
     await onSubmit(values)
   }
 
@@ -66,13 +68,15 @@ export default function LoginForm(props: LoginFormProps) {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input placeholder="Password" {...field} />
+                <Input type="password" placeholder="Password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Login</Button>
+        <Button type="submit" className="mt-4" disabled={loading}>
+          {loading ? "Loading..." : "Login"}
+        </Button>
       </form>
     </Form>
   );
