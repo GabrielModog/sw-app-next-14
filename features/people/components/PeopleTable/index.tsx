@@ -7,6 +7,7 @@ import { getPeopleRequest } from "../../api/get-people";
 import { useToast } from "@/components/ui/use-toast";
 import { usePeopleStore } from "../../store/people";
 import { useEffect } from "react";
+import PeopleFilter from "../PeopleFilter";
 
 export default function PeopleTable() {
   const { people, setPeople, page, setPage } = usePeopleStore();
@@ -31,11 +32,14 @@ export default function PeopleTable() {
   }, [page]);
 
   return (
-    <PeopleDataTable
-      columns={columns}
-      data={people}
-      page={page}
-      setPage={setPage}
-    />
+    <>
+      <PeopleFilter />
+      <PeopleDataTable
+        columns={columns}
+        data={people}
+        page={page}
+        setPage={setPage}
+      />
+    </>
   );
 }
