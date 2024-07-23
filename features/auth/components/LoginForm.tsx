@@ -43,6 +43,7 @@ export default function LoginForm() {
   });
 
   async function onSubmitHandler(values: z.infer<typeof formSchema>) {
+    setLoading(true)
     const formData = new FormData()
     formData.append("email", values.email)
     formData.append("password", values.password)
@@ -79,7 +80,7 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email" {...field} />
+                <Input placeholder="Email" {...field} disabled={loading} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,7 +94,7 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
+                <Input type="password" placeholder="Password" {...field} disabled={loading} />
               </FormControl>
               <FormMessage />
             </FormItem>
