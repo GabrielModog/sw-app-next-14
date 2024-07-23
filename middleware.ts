@@ -5,7 +5,6 @@ import * as jose from "jose";
 
 export async function middleware(request: NextRequest) {
   const cookie = cookies().get("Authorization");
-  console.log("auth", cookie)
 
   if (!cookie) {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -17,6 +16,7 @@ export async function middleware(request: NextRequest) {
   try {
     const { payload } = await jose.jwtVerify(jwt, secret, {});
     console.log(payload);
+    console.log("nexurl", request.nextUrl)
   } catch (err) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
