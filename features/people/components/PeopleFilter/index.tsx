@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { searchPeopleRequest } from "../../api/search-people";
 import { usePeopleStore } from "../../store/people";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { getPeopleRequest } from "../../api/get-people";
 
 const formSchema = z.object({
   search: z.string().min(3, "Should has at leat 3 characters..."),
@@ -24,13 +26,34 @@ const defaultValues = {
 };
 
 export default function PeopleFilter() {
-  const { setPeople } = usePeopleStore();
+  const { setPeople, setSearchMode, searchMode, page } = usePeopleStore();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+
+  async function handleGoBackToOrignalList() {
+    form.reset();
+    setSearchMode(false);
+    try {
+      const [err, res] = await getPeopleRequest({ page });
+
+      if (err)
+        return toast({
+          description: err.message,
+          variant: "destructive",
+        });
+      return setPeople(res?.results!);
+    } catch (error) {
+      toast({
+        description: "Something went wrong when tried to search...",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  }
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -41,7 +64,7 @@ export default function PeopleFilter() {
           description: err.message,
           variant: "destructive",
         });
-
+      setSearchMode(true);
       return setPeople(res?.results!);
     } catch (error) {
       toast({
@@ -55,27 +78,34 @@ export default function PeopleFilter() {
   return (
     <Form {...form}>
       <form
-        className="my-4"
+        className="my-4 relative"
         style={{ marginBottom: "1rem" }}
         onSubmit={form.handleSubmit(handleSubmit)}
       >
-        <FormField
-          control={form.control}
-          name="search"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Search for a person</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Search for a character..."
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+        <div className="flex flex-row items-center justify-between gap-2">
+          <FormField
+            control={form.control}
+            name="search"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="Search for a character..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {searchMode && (
+            <Button type="button" onClick={handleGoBackToOrignalList}>
+              Go Back
+            </Button>
           )}
-        />
+        </div>
       </form>
     </Form>
   );
