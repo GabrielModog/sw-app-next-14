@@ -21,7 +21,7 @@ poderá ser vizualiado o projeto rodando.
 - SQLite
 - React Hook Form
 - Zod
-- Node 20 LTS
+- Node 20.13.1 LTS
 - API do Star Wars (https://swapi.dev/)
 
 #### Observações
