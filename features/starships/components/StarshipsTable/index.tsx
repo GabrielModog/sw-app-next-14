@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 import { columns } from "./columns";
 import { StarshipsDataTable } from "./data-table";
+import StarshipsFilter from "../StarshipsFilter";
 
 export default function StarshipsTable() {
   const { starships, setStarships, page, setPage } = useStarshipsStore();
@@ -31,11 +32,14 @@ export default function StarshipsTable() {
   }, [page]);
 
   return (
-    <StarshipsDataTable
-      columns={columns}
-      data={starships}
-      page={page}
-      setPage={setPage}
-    />
+    <>
+      <StarshipsFilter />
+      <StarshipsDataTable
+        columns={columns}
+        data={starships}
+        page={page}
+        setPage={setPage}
+      />
+    </>
   );
 }
