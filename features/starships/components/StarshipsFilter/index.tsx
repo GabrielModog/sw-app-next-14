@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { searchStarshipsRequest } from "../../api/search-starships";
 import { useStarshipsStore } from "../../store/starships";
 import { getStarshipsRequest } from "../../api/get-starships";
+import { useDebounce } from "@uidotdev/usehooks";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   search: z.string().min(3, "Should has at leat 3 characters..."),
@@ -33,6 +35,8 @@ export default function StarshipsFilter() {
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+
+  const debouncedSearchTerm = useDebounce(form.getValues("search"), 300);
 
   async function handleGoBackToOrignalList() {
     form.reset();
@@ -57,7 +61,9 @@ export default function StarshipsFilter() {
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const [err, res] = await searchStarshipsRequest({ starship: values.search });
+      const [err, res] = await searchStarshipsRequest({
+        starship: values.search,
+      });
 
       if (err)
         return toast({
@@ -74,6 +80,23 @@ export default function StarshipsFilter() {
       throw error;
     }
   }
+
+  useEffect(() => {
+    const load = async () => {
+      let results: any = [];
+      if (debouncedSearchTerm.trim() !== "") {
+        setSearchMode(true);
+        const [err, res] = await searchStarshipsRequest({
+          starship: debouncedSearchTerm,
+        });
+        results = res?.results ?? [];
+      }
+
+      setStarships(results!);
+    };
+
+    load();
+  }, [debouncedSearchTerm]);
 
   return (
     <Form {...form}>

@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useDebounce } from "@uidotdev/usehooks";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -16,9 +17,10 @@ import { usePeopleStore } from "../../store/people";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { getPeopleRequest } from "../../api/get-people";
+import { useEffect } from "react";
 
 const formSchema = z.object({
-  search: z.string().min(3, "Should has at leat 3 characters..."),
+  search: z.string(),
 });
 
 const defaultValues = {
@@ -33,6 +35,8 @@ export default function PeopleFilter() {
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+
+  const debouncedSearchTerm = useDebounce(form.getValues("search"), 300);
 
   async function handleGoBackToOrignalList() {
     form.reset();
@@ -74,6 +78,23 @@ export default function PeopleFilter() {
       throw error;
     }
   }
+
+  useEffect(() => {
+    const load = async () => {
+      let results: any = [];
+      if (debouncedSearchTerm.trim() !== "") {
+        setSearchMode(true);
+        const [err, res] = await searchPeopleRequest({
+          person: debouncedSearchTerm,
+        });
+        results = res?.results ?? [];
+      }
+
+      setPeople(results!);
+    };
+
+    load();
+  }, [debouncedSearchTerm]);
 
   return (
     <Form {...form}>
