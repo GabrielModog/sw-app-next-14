@@ -20,13 +20,24 @@ import { useFormState } from "react-dom";
 import signupAction from "../actions/signup";
 import { useUserStore } from "../store/user";
 
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6, "Your password most be at least 6 characters."),
-  confirmPassword: z
-    .string()
-    .min(6, "Your password most be at least 6 characters."),
-});
+const formSchema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(6, "Your password most be at least 6 characters."),
+    confirmPassword: z
+      .string()
+      .min(6, "Your password most be at least 6 characters."),
+  })
+  .superRefine(({ confirmPassword, password }, ctx) => {
+    if (confirmPassword !== password) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "The passwords aren't the same, you should but the same password.",
+        path: ["confirmPassword"],
+      });
+    }
+  });
 
 const defaultValues = {
   email: "",
@@ -34,13 +45,12 @@ const defaultValues = {
   confirmPassword: "",
 };
 
-
 export default function SignUpForm() {
-  const [loading, setLoading] = useState(false)
-  const { setUser } = useUserStore()
-  const [, formAction] = useFormState(signupAction, undefined)
+  const [loading, setLoading] = useState(false);
+  const { setUser } = useUserStore();
+  const [, formAction] = useFormState(signupAction, undefined);
 
-  const {toast} = useToast()
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,25 +58,25 @@ export default function SignUpForm() {
   });
 
   async function onSubmitHandler(values: z.infer<typeof formSchema>) {
-    const formData = new FormData()
-    formData.append("email", values.email)
-    formData.append("password", values.password)
+    const formData = new FormData();
+    formData.append("email", values.email);
+    formData.append("password", values.password);
 
     try {
-      await formAction(formData)
-      setUser(values.email)
+      await formAction(formData);
+      setUser(values.email);
       return toast({
         description: "You are sign up!",
-        variant: "default"
-      })
+        variant: "default",
+      });
     } catch (error) {
       toast({
         description: "Wasn't possible to sign up",
-        variant: "destructive"
-      })
-      throw new Error("Something went wrong")
+        variant: "destructive",
+      });
+      throw new Error("Something went wrong");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -108,14 +118,20 @@ export default function SignUpForm() {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Confirm Password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="Confirm Password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" disabled={loading}>Sign Up</Button>
+        <Button type="submit" disabled={loading}>
+          Sign Up
+        </Button>
       </form>
     </Form>
   );
