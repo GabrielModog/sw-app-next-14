@@ -29,7 +29,7 @@ export const columns: ColumnDef<IPeople>[] = [
           .split("/")
           .find(str => Number(str))
 
-        router.push(`/people/${id}`)
+        router.push(`/people/details/${id}`)
       }
       return (
         <Button variant="outline" onClick={handleAction}>
