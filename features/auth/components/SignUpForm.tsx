@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useFormState } from "react-dom";
 import signupAction from "../actions/signup";
+import { useUserStore } from "../store/user";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -36,6 +37,7 @@ const defaultValues = {
 
 export default function SignUpForm() {
   const [loading, setLoading] = useState(false)
+  const { setUser } = useUserStore()
   const [, formAction] = useFormState(signupAction, undefined)
 
   const {toast} = useToast()
@@ -52,6 +54,7 @@ export default function SignUpForm() {
 
     try {
       await formAction(formData)
+      setUser(values.email)
       return toast({
         description: "You are sign up!",
         variant: "default"

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import LogoutButton from "@/features/auth/components/Logout";
 
 const routes = [{
   label: "People",
@@ -28,6 +29,8 @@ export default function Navbar() {
           ))}
         </ul>
       </div>
+
+      <LogoutButton />
     </nav>
   );
 }

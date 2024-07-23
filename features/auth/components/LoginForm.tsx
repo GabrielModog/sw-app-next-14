@@ -18,6 +18,7 @@ import loginAction from "../actions/login";
 import { useFormState, useFormStatus } from "react-dom";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useUserStore } from "../store/user";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -31,9 +32,10 @@ const defaultValues = {
 
 export default function LoginForm() {
   const [loading, setLoading] = useState(false)
+  const { setUser } = useUserStore()
   const [, formAction] = useFormState(loginAction, undefined);
 
-  const {toast} = useToast()
+  const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,7 +51,9 @@ export default function LoginForm() {
 
     try {
       await formAction(formData)
- 
+
+      setUser(values.email)
+
       return toast({
         description: "You are logged in",
         variant: "default"
