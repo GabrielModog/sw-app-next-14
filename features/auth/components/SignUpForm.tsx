@@ -14,6 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { useFormState } from "react-dom";
+import signupAction from "../actions/signup";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -29,12 +33,12 @@ const defaultValues = {
   confirmPassword: "",
 };
 
-interface SignUpFormProps {
-  onSubmit: (values: z.infer<typeof formSchema>) => void;
-}
 
-export default function SignUpForm(props: SignUpFormProps) {
-  const { onSubmit } = props;
+export default function SignUpForm() {
+  const [loading, setLoading] = useState(false)
+  const [, formAction] = useFormState(signupAction, undefined)
+
+  const {toast} = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,8 +46,25 @@ export default function SignUpForm(props: SignUpFormProps) {
   });
 
   async function onSubmitHandler(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    await onSubmit(values);
+    const formData = new FormData()
+    formData.append("email", values.email)
+    formData.append("password", values.password)
+
+    try {
+      await formAction(formData)
+      return toast({
+        description: "You are sign up!",
+        variant: "default"
+      })
+    } catch (error) {
+      toast({
+        description: "Wasn't possible to sign up",
+        variant: "destructive"
+      })
+      throw new Error("Something went wrong")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -91,7 +112,7 @@ export default function SignUpForm(props: SignUpFormProps) {
           )}
         />
 
-        <Button type="submit">Login</Button>
+        <Button type="submit" disabled={loading}>Sign Up</Button>
       </form>
     </Form>
   );

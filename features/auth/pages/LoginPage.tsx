@@ -10,6 +10,6 @@ export default function LoginPage() {
     <h2 className="text-2xl font-semibold mb-4 pb-4">
       Login
     </h2>
-    <LoginForm onSubmit={handleOnSubmit} />
+    <LoginForm />
   </section>
 }

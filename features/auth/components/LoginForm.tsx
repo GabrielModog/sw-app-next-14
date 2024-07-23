@@ -14,6 +14,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import loginAction from "../actions/login";
+import { useFormState, useFormStatus } from "react-dom";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -25,13 +29,11 @@ const defaultValues = {
   password: "",
 };
 
-interface LoginFormProps {
-  onSubmit: (values: z.infer<typeof formSchema>) => void
-  loading?: boolean
-}
+export default function LoginForm() {
+  const [loading, setLoading] = useState(false)
+  const [, formAction] = useFormState(loginAction, undefined);
 
-export default function LoginForm(props: LoginFormProps) {
-  const {onSubmit, loading = false} = props
+  const {toast} = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,9 +41,28 @@ export default function LoginForm(props: LoginFormProps) {
   });
 
   async function onSubmitHandler(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    const formData = new FormData()
+    formData.append("email", values.email)
+    formData.append("password", values.password)
+
     form.reset()
-    await onSubmit(values)
+
+    try {
+      await formAction(formData)
+ 
+      return toast({
+        description: "You are logged in",
+        variant: "default"
+      })
+    } catch (error) {
+      toast({
+        description: "Something went wrong on login, check if your fields it's right",
+        variant: "destructive"
+      })
+      throw new Error("Wasn't possibel to login")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
