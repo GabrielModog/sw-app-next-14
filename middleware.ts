@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   console.log("auth", cookie)
 
   if (!cookie) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
     const { payload } = await jose.jwtVerify(jwt, secret, {});
     console.log(payload);
   } catch (err) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 }
 
